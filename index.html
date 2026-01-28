@@ -4448,20 +4448,25 @@ FOLDER: Category Name | 📁 | #4ECDC4
       resultDiv.classList.remove('has-image');
       
       try {
-        // Build the request
+        // Build the request with correct format per Google docs
         const requestBody = {
           contents: [{
             parts: [{ text: promptText }]
           }],
           generationConfig: {
-            responseModalities: ["TEXT", "IMAGE"],
-            imageMimeType: "image/png"
+            responseModalities: ["TEXT", "IMAGE"]
           }
         };
         
-        // Add aspect ratio if supported
-        if (aspectRatio && aspectRatio !== '1:1') {
-          requestBody.generationConfig.aspectRatio = aspectRatio;
+        // Add imageConfig for aspect ratio and resolution
+        if (aspectRatio !== '1:1' || resolution !== '1K') {
+          requestBody.generationConfig.imageConfig = {};
+          if (aspectRatio !== '1:1') {
+            requestBody.generationConfig.imageConfig.aspectRatio = aspectRatio;
+          }
+          if (resolution !== '1K') {
+            requestBody.generationConfig.imageConfig.imageSize = resolution;
+          }
         }
         
         const response = await fetch(
